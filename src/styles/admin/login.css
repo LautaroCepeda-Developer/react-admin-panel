@@ -1,0 +1,12 @@
+.login-input-field:focus, .login-input-field:focus-within, .login-input-field:focus-visible {
+    outline: none;
+}
+
+
+.field-container-focus {
+    outline: 2px solid #FFF;
+}
+
+::-ms-reveal {
+    filter: invert();
+}
