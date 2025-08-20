@@ -17,10 +17,11 @@ interface IEditableCellProps {
     row: any,
     field:string,
     tableHeader: TableHeader,
-    setCloudSavingState : Dispatch<SetStateAction<SaveState>>
+    setCloudSavingState : Dispatch<SetStateAction<SaveState>>,
+    customClassName?:string
 }
 
-export default function EditableCell({row, field, tableHeader, setCloudSavingState}:IEditableCellProps) {
+export default function EditableCell({row, field, tableHeader, setCloudSavingState, customClassName}:IEditableCellProps) {
     const [startValue, setStartValue] : [string, Dispatch<SetStateAction<string>>] = useState(row.original[field]);
     const [value, setValue] : [string, Dispatch<SetStateAction<string>>] = useState(row.original[field]);
     const [editing, setEditing] = useState(false);
@@ -75,5 +76,5 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
         )
     }
 
-    return <span className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap" onClick={() => setEditing(true)}>{value}</span>
+    return <span className={`flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap ${customClassName}`} onClick={() => setEditing(true)}>{value}</span>
 }

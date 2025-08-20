@@ -71,13 +71,13 @@ function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
         <div className='flex justify-between mb-4 h-fit gap-3'>
             <h2 className='text-lg font-bold h-full flex justify-center items-end self-end'>Roles</h2>
             
-            {error ? (<p className='flex justify-center items-end ml-2 text-red-900 font-medium'>An error ocurred loading the users {errorCode}</p>) : (<></>)}
+            {error ? (<p className='flex justify-center items-end ml-2 text-red-900 font-medium'>An error ocurred loading the roles {errorCode}</p>) : (<></>)}
 
             <button className='cursor-pointer border-2 py-2 px-3 font-semibold hover:border-stone-300 hover:text-black hover:bg-stone-200 transition-colors ease-in-out no-select' onClick={fetchData}>RELOAD DATA</button>
         </div>
         
 
-        {loading ? (<p>Loading users...</p>) : (
+        {loading ? (<p>Loading roles...</p>) : (
             <table className='w-full border-collapse border-2 border-white table-auto'>
                 <colgroup>
                     <col span={1} className='w-fit'/>

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import {
     ColumnDef,
-    createColumnHelper,
     flexRender,
     getCoreRowModel,
     useReactTable,
@@ -29,8 +28,6 @@ type ApiResponse = {
     totalPages: number;
     usersFiltered: User[];
 };
-
-const columnHelper = createColumnHelper<User>();
 
 function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
     const [data, setData] = useState<User[]>([]);
@@ -82,7 +79,7 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
         {
             accessorKey: "fullname",
             header: "Full name",
-            cell: ({row}) => <EditableCell row={row} field="fullname" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
+            cell: ({row}) => <EditableCell customClassName='text-wrap flex-wrap' row={row} field="fullname" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
         },
         {
             accessorKey:"email",
@@ -107,12 +104,12 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
         {
             accessorKey:"created_at",
             header: "Created at",
-            cell: ({row}) => (<span className='py-2 px-3'>{new Date(row.original.created_at).toLocaleDateString('es-ar',dateOptions)}</span>)
+            cell: ({row}) => (<span className='py-2 px-3 text-nowrap flex-nowrap'>{new Date(row.original.created_at).toLocaleDateString('es-ar',dateOptions)}</span>)
         },
         {
             accessorKey:"updated_at",
             header: "Updated at",
-            cell: ({row}) => (<span className='py-2 px-3'>{new Date(row.original.updated_at).toLocaleDateString('es-ar',dateOptions)}</span>)
+            cell: ({row}) => (<span className='py-2 px-3 text-nowrap flex-nowrap'>{new Date(row.original.updated_at).toLocaleDateString('es-ar',dateOptions)}</span>)
         }
 
     ]
