@@ -1,0 +1,1 @@
+export type SaveState = "SAVING" | "SAVED" | "ERROR";

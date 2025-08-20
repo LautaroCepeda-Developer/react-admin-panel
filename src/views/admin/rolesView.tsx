@@ -1,20 +1,16 @@
-import { useState, useEffect } from "react";
+import { Role } from "@/types/Entities";
+import { ISetCloudSavingState } from "@/Interfaces/StatesInterfaces";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
-    createColumnHelper,
+    ColumnDef,
     flexRender,
     getCoreRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import EditableCell from "@/components/admin/editableCell";
 
-type Role = {
-    id: number,
-    name: string,
-    description: string | null
-}
 
-const columnHelper = createColumnHelper<Role>();
-
-function RolesTable() {
+function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
     const [data, setData] = useState<Role[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -48,16 +44,21 @@ function RolesTable() {
 
     useEffect(() => {fetchData();}, [])
 
-    const columns = [
-        columnHelper.accessor('name', {
-            header: 'Name',
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor("description", {
+
+    const columns : ColumnDef<Role>[] = [
+        {
+            accessorKey: "name",
+            header: "Name",
+            cell: ({row}) => <EditableCell row={row} field="name" tableHeader="roles" setCloudSavingState={setCloudSavingState} />,
+        },
+        {
+            accessorKey: "description",
             header: "Description",
-            cell: (info) => info.getValue()
-        })
+            cell: ({row}) => <EditableCell row={row} field="description" tableHeader="roles" setCloudSavingState={setCloudSavingState}/>
+        }
+
     ]
+
 
     const table = useReactTable({
         data,
@@ -66,9 +67,9 @@ function RolesTable() {
     })
 
     return (
-    <>
+    <div className="overflow-auto">
         <div className='flex justify-between mb-4 h-fit gap-3'>
-            <h2 className='text-lg font-bold h-full flex justify-center items-end'>Roles</h2>
+            <h2 className='text-lg font-bold h-full flex justify-center items-end self-end'>Roles</h2>
             
             {error ? (<p className='flex justify-center items-end ml-2 text-red-900 font-medium'>An error ocurred loading the users {errorCode}</p>) : (<></>)}
 
@@ -77,12 +78,16 @@ function RolesTable() {
         
 
         {loading ? (<p>Loading users...</p>) : (
-            <table className='w-full border-collapse border-2 border-white'>
+            <table className='w-full border-collapse border-2 border-white table-auto'>
+                <colgroup>
+                    <col span={1} className='w-fit'/>
+                    <col span={1} className='w-full'/>
+                </colgroup>
                 <thead className='bg-black'>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
-                                <th key={header.id} className='border border-white p-2 text-left'>
+                                <th key={header.id} className='border border-white py-2 px-3 text-left text-nowrap flex-nowrap'>
                                     {flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
@@ -99,7 +104,7 @@ function RolesTable() {
                     {table.getRowModel().rows.map((row, index) => (
                         <tr key={row.id} className={index % 2 === 0 ? "bg-gray-200 text-black" : "bg-gray-400 text-black"}>
                             {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className='border wrap-anywhere border-gray-300 p-2 text-wrap'>
+                                <td key={cell.id} className='border border-gray-300 text-wrap'>
                                     {flexRender(
                                         cell.column.columnDef.cell,
                                         cell.getContext()
@@ -114,10 +119,10 @@ function RolesTable() {
 
         <div className='flex justify-between items-center mt-4'>
         </div>
-    </>)
+    </div>)
 }
 
 
-export default function RolesView() {
-    return <RolesTable/>;
+export default function RolesView({setCloudSavingState}:ISetCloudSavingState) {
+    return <RolesTable setCloudSavingState={setCloudSavingState}/>;
 }

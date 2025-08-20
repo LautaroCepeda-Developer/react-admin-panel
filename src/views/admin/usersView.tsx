@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import {
+    ColumnDef,
     createColumnHelper,
     flexRender,
     getCoreRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import EditableCell from '@/components/admin/editableCell';
+import { ISetCloudSavingState } from '@/Interfaces/StatesInterfaces';
 
 type User = {
     id: number;
@@ -29,7 +32,7 @@ type ApiResponse = {
 
 const columnHelper = createColumnHelper<User>();
 
-function UsersTable() {
+function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
     const [data, setData] = useState<User[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -73,40 +76,46 @@ function UsersTable() {
         year:"numeric", day:"2-digit","month":"2-digit"
     }
 
-    // Column definitions
-    const columns = [
-        columnHelper.accessor('fullname', {
-            header: 'Full Name',
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor('email', {
-            header: 'Email',
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor('username', {
-            header: 'Username',
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.display({
-            id: 'password',
-            header: 'Password',
-            cell: () => '••••••',
-        }),
-        columnHelper.accessor('role_id', {
-            header: 'Role ID',
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor('created_at', {
-            header: 'Created',
-            cell: (info) =>
-                new Date(info.getValue()).toLocaleDateString('es-AR', dateOptions),
-        }),
-        columnHelper.accessor('updated_at', {
-            header: 'Updated',
-            cell: (info) =>
-                new Date(info.getValue()).toLocaleDateString('es-ar',dateOptions),
-        }),
-    ];
+
+
+    const columns : ColumnDef<User>[] = [
+        {
+            accessorKey: "fullname",
+            header: "Full name",
+            cell: ({row}) => <EditableCell row={row} field="fullname" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
+        },
+        {
+            accessorKey:"email",
+            header: "Email",
+            cell: ({row}) => <EditableCell row={row} field="email" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
+        },
+        {
+            accessorKey:"username",
+            header: "Username",
+            cell: () => (<span className='py-2 px-3'>•••••••</span>)
+        },
+        {
+            accessorKey:"password",
+            header: "Password",
+            cell: () => (<span className='py-2 px-3'>•••••••</span>)
+        },
+        {
+            accessorKey:"role_id",
+            header: "Role Id",
+            cell: ({row}) => (<span className='py-2 px-3 flex-center text-center'>{row.original.role_id}</span>) 
+        },
+        {
+            accessorKey:"created_at",
+            header: "Created at",
+            cell: ({row}) => (<span className='py-2 px-3'>{new Date(row.original.created_at).toLocaleDateString('es-ar',dateOptions)}</span>)
+        },
+        {
+            accessorKey:"updated_at",
+            header: "Updated at",
+            cell: ({row}) => (<span className='py-2 px-3'>{new Date(row.original.updated_at).toLocaleDateString('es-ar',dateOptions)}</span>)
+        }
+
+    ]
 
     const table = useReactTable({
         data,
@@ -115,9 +124,9 @@ function UsersTable() {
     });
 
     return (
-    <>
+    <div className='overflow-auto'>
         <div className='flex justify-between mb-4 h-fit gap-3'>
-            <h2 className='text-lg font-bold h-full flex justify-center items-end'>Users</h2>
+            <h2 className='text-lg font-bold h-full flex justify-center items-end self-end'>Users</h2>
             
             {error ? (<p className='flex justify-center items-end ml-2 text-red-900 font-medium'>An error ocurred loading the users {errorCode}</p>) : (<></>)}
 
@@ -127,11 +136,20 @@ function UsersTable() {
 
         {loading ? (<p>Loading users...</p>) : (
             <table className='w-full border-collapse border-2 border-white'>
+                <colgroup>
+                    <col span={1} className='w-full'/>
+                    <col span={1} className='w-fit'/>
+                    <col span={1} className='w-fit'/>
+                    <col span={1} className='w-fit'/>
+                    <col span={1} className='w-fit'/>
+                    <col span={1} className='w-fit'/>
+                    <col span={1} className='w-fit'/>
+                </colgroup>
                 <thead className='bg-black'>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
-                                <th key={header.id} className='border border-white p-2 text-left'>
+                                <th key={header.id} className='border border-white py-2 px-3 text-left text-nowrap flex-nowrap'>
                                     {flexRender(
                                         header.column.columnDef.header,
                                         header.getContext()
@@ -148,7 +166,7 @@ function UsersTable() {
                     {table.getRowModel().rows.map((row, index) => (
                         <tr key={row.id} className={index % 2 === 0 ? "bg-gray-200 text-black" : "bg-gray-400 text-black"}>
                             {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className='border wrap-anywhere border-gray-300 p-2 text-wrap'>
+                                <td key={cell.id} className='wrap-anywhere md:wrap-normal border border-gray-300 text-wrap'>
                                     {flexRender(
                                         cell.column.columnDef.cell,
                                         cell.getContext()
@@ -176,9 +194,9 @@ function UsersTable() {
                 className='cursor-pointer px-3 py-1 bg-white text-black font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed'
             >NEXT</button>
         </div>
-    </>)
+    </div>)
 }
 
-export default function UsersView() {
-    return <UsersTable/>;
+export default function UsersView({setCloudSavingState}:ISetCloudSavingState) {
+    return <UsersTable setCloudSavingState={setCloudSavingState} />;
 }
