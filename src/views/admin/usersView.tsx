@@ -9,25 +9,8 @@ import {
 } from '@tanstack/react-table';
 import EditableCell from '@/components/admin/editableCell';
 import { ISetCloudSavingState } from '@/Interfaces/StatesInterfaces';
+import { User, UserApiResponse } from '@/types/Entities';
 
-type User = {
-    id: number;
-    fullname: string;
-    email: string;
-    username: string;
-    password: string;
-    role_id: number;
-    created_at: string;
-    updated_at: string;
-};
-
-type ApiResponse = {
-    parsedPage: number;
-    parsedLimit: number;
-    total: number;
-    totalPages: number;
-    usersFiltered: User[];
-};
 
 function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
     const [data, setData] = useState<User[]>([]);
@@ -52,7 +35,7 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
                 setData([]);
             }
 
-            const json: ApiResponse = await res.json();
+            const json: UserApiResponse = await res.json();
 
             setData(json.usersFiltered);
             setTotalPages(json.totalPages);
@@ -97,9 +80,9 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
             cell: () => (<span className='py-2 px-3'>•••••••</span>)
         },
         {
-            accessorKey:"role_id",
-            header: "Role Id",
-            cell: ({row}) => (<span className='py-2 px-3 flex-center text-center'>{row.original.role_id}</span>) 
+            accessorKey:"role_name",
+            header: "Role",
+            cell: ({row}) => (<span className='py-2 px-3 flex-center text-center text-nowrap'>{row.original.role_name} <span className='ml-1 opacity-70 text-xs'>(LVL {row.original.role_level})</span></span>) 
         },
         {
             accessorKey:"created_at",
@@ -163,7 +146,7 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
                     {table.getRowModel().rows.map((row, index) => (
                         <tr key={row.id} className={index % 2 === 0 ? "bg-gray-200 text-black" : "bg-gray-400 text-black"}>
                             {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className='wrap-anywhere md:wrap-normal border border-gray-300 text-wrap'>
+                                <td key={cell.id} data-row-id={row.id} data-header-id={cell.column.id} className='wrap-anywhere md:wrap-normal border border-gray-300 text-wrap'>
                                     {flexRender(
                                         cell.column.columnDef.cell,
                                         cell.getContext()

@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ISetCloudSavingState } from "@/Interfaces/StatesInterfaces";
+import { User } from "@/types/Entities";
+import { Row } from "@tanstack/react-table";
 
 type SaveState = "SAVING" | "SAVED" | "ERROR";
 
@@ -21,9 +23,35 @@ interface IEditableCellProps {
     customClassName?:string
 }
 
+function getCurrentFormatedDate() : string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+function UpdateUpdatedAtValue(row : Row<User>) : void {
+    row.original["updated_at"] = getCurrentFormatedDate();
+
+    const dateOptions : Intl.DateTimeFormatOptions = {
+        year:"numeric", day:"2-digit","month":"2-digit"
+    }
+
+    document.querySelector(`td[data-row-id="${CSS.escape(row.id)}"][data-header-id="updated_at"]`)!.firstElementChild!.innerHTML = `${new Date(row.original["updated_at"]).toLocaleDateString('es-ar',dateOptions)}`
+
+}
+
 export default function EditableCell({row, field, tableHeader, setCloudSavingState, customClassName}:IEditableCellProps) {
     const [startValue, setStartValue] : [string, Dispatch<SetStateAction<string>>] = useState(row.original[field]);
     const [value, setValue] : [string, Dispatch<SetStateAction<string>>] = useState(row.original[field]);
+
+    const [start_updated_at_value, setStart_updated_at_value] : [string, Dispatch<SetStateAction<string>>] = useState(row.original["updated_at"])
+
     const [editing, setEditing] = useState(false);
 
     let endpoint = getEndpoint(tableHeader);
@@ -51,12 +79,26 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
             }
 
             changeSaveState("SAVED", {setCloudSavingState});
+            
+            // Visual update of the 'updated at' field (if exists)
+            if (row.original["updated_at"]) {
+                UpdateUpdatedAtValue(row);
+                setStart_updated_at_value(row.original["updated_at"])
+            }
+
             // Setting a new "Default value"
             setStartValue(value.trim());
+
         } catch (error) {
             changeSaveState("ERROR", {setCloudSavingState});
             // Reverting the changes
             setValue(startValue.trim());
+
+            // Reverting the 'updated at field' (if exists)
+            if (row.original["updated_at"]) {
+                row.original["updated_at"] = start_updated_at_value;
+            }
+
         }
     };
 
