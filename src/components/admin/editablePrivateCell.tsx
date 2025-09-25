@@ -1,27 +1,26 @@
-import { Dispatch, SetStateAction, useState } from "react";
 import { ISetCloudSavingState } from "@/Interfaces/StatesInterfaces";
 import { TableHeader, User } from "@/types/Entities";
-import { Row } from "@tanstack/react-table";
 import { SaveState } from "@/types/States";
+import { Row } from "@tanstack/react-table";
+import React, { Dispatch, ReactElement, ReactNode, SetStateAction } from "react";
+import { useState } from "react";
+import EditPrivateFieldOverlay from "./EditPrivateFieldOverlay";
+import { createPortal } from "react-dom";
 
 
-
-const changeSaveState = (state : SaveState, {setCloudSavingState} : ISetCloudSavingState) => {
+const changeSaveState = (state:SaveState, {setCloudSavingState} : ISetCloudSavingState) => {
     setCloudSavingState(state);
 }
-
-
 
 const getEndpoint = (tableHeader : TableHeader) => 
     `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`
 
-
-interface IEditableCellProps {
-    row: any,
-    field:string,
+interface IEditablePrivateCellProps {
+    row : any,
+    field: string,
     tableHeader: TableHeader,
     setCloudSavingState : Dispatch<SetStateAction<SaveState>>,
-    customClassName?:string
+    customClassName?: string
 }
 
 function getCurrentFormatedDate() : string {
@@ -44,12 +43,13 @@ function UpdateUpdatedAtValue(row : Row<User>) : void {
     }
 
     document.querySelector(`td[data-row-id="${CSS.escape(row.id)}"][data-header-id="updated_at"]`)!.firstElementChild!.innerHTML = `${new Date(row.original["updated_at"]).toLocaleDateString('es-ar',dateOptions)}`
-
 }
 
-export default function EditableCell({row, field, tableHeader, setCloudSavingState, customClassName}:IEditableCellProps) {
-    const [startValue, setStartValue] : [string, Dispatch<SetStateAction<string>>] = useState(row.original[field]);
-    const [value, setValue] : [string, Dispatch<SetStateAction<string>>] = useState(row.original[field]);
+export default function EditablePrivateCell({row, field, tableHeader, setCloudSavingState, customClassName} :IEditablePrivateCellProps) {
+    const [modal, setModal] = useState<ReactNode>(null);
+
+    const [startValue, setStartValue] : [string, Dispatch<SetStateAction<string>>] = useState("••••••");
+    const [value, setValue] : [string, Dispatch<SetStateAction<string>>] = useState("••••••");
 
     const [start_updated_at_value, setStart_updated_at_value] : [string, Dispatch<SetStateAction<string>>] = useState(row.original["updated_at"])
 
@@ -57,7 +57,30 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
 
     let endpoint = getEndpoint(tableHeader);
 
+    const openOverlay = async () => {
+        if (value.trim() === startValue) return;
+
+        setEditing(false);
+        
+        const overlay = createPortal(<EditPrivateFieldOverlay cancelFunction={revertChanges} continueFunction={saveChange}/>, document.body);
+
+        setModal(overlay);
+    }
+
+    const revertChanges = async () => {
+        setModal(null);
+
+        // Reverting the changes
+        setValue(startValue.trim());
+
+        // Reverting the 'updated at field' (if exists)
+        if (row.original["updated_at"]) {
+            row.original["updated_at"] = start_updated_at_value;
+        }
+    }
+
     const saveChange = async () => {
+        setModal(null);
         setValue(value.trim());
         setEditing(false);
 
@@ -88,7 +111,8 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
             }
 
             // Setting a new "Default value"
-            setStartValue(value.trim());
+            setStartValue("••••••");
+            setValue("••••••")
 
         } catch (error) {
             changeSaveState("ERROR", {setCloudSavingState});
@@ -104,20 +128,19 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
     };
 
     if (editing) {
-        
         return (
-            <input className="py-2 px-3 m-0 field-sizing-content w-full"
+            <input type="text" className="py-2 px-3 m-0 field-sizing-content w-full"
             spellCheck="false"
             autoComplete="false"
             autoCapitalize="false"
             name={field + " input"}
             value={value} 
             onChange={(evt) => setValue(evt.target.value)}
-            onBlur={saveChange}
-            onKeyDown={(evt)=> evt.key === "Enter" && saveChange()}
+            onBlur={openOverlay}
+            onKeyDown={(evt)=> evt.key === "Enter" && openOverlay()}
             autoFocus/>
         )
     }
 
-    return <span className={`flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap ${customClassName}`} onClick={() => setEditing(true)}>{value}</span>
+    return <><span className={`flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap ${customClassName}`} onClick={() => setEditing(true)}>{value}</span>{modal}</>
 }

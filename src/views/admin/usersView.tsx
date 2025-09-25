@@ -10,6 +10,7 @@ import {
 import EditableCell from '@/components/admin/editableCell';
 import { ISetCloudSavingState } from '@/Interfaces/StatesInterfaces';
 import { User, UserApiResponse } from '@/types/Entities';
+import EditablePrivateCell from '@/components/admin/editablePrivateCell';
 
 
 function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
@@ -72,12 +73,12 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
         {
             accessorKey:"username",
             header: "Username",
-            cell: () => (<span className='py-2 px-3'>•••••••</span>)
+            cell: ({row}) => <EditablePrivateCell row={row} field="username" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
         },
         {
             accessorKey:"password",
             header: "Password",
-            cell: () => (<span className='py-2 px-3'>•••••••</span>)
+            cell: ({row}) => <EditablePrivateCell row={row} field="password" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
         },
         {
             accessorKey:"role_name",
