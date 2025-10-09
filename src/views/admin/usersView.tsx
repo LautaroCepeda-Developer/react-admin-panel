@@ -11,6 +11,7 @@ import EditableCell from '@/components/admin/editableCell';
 import { ISetCloudSavingState } from '@/Interfaces/StatesInterfaces';
 import { User, UserApiResponse } from '@/types/Entities';
 import EditablePrivateCell from '@/components/admin/editablePrivateCell';
+import DeleteRowButton from '@/components/admin/deleteRowButton';
 
 
 function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
@@ -94,8 +95,12 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
             accessorKey:"updated_at",
             header: "Updated at",
             cell: ({row}) => (<span className='py-2 px-3 text-nowrap flex-nowrap'>{new Date(row.original.updated_at).toLocaleDateString('es-ar',dateOptions)}</span>)
+        },
+        {
+            accessorKey:"delete_btn",
+            header:"",
+            cell: ({row}) => (row.original.role_name === "superadmin" || row.original.role_level === 1 ? <></> : <DeleteRowButton row={row} field='delete_btn' reloadDataFunc={fetchData} setCloudSavingState={setCloudSavingState} tableHeader='users'/>)
         }
-
     ]
 
     const table = useReactTable({
@@ -119,6 +124,7 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
             <table className='w-full border-collapse border-2 border-white'>
                 <colgroup>
                     <col span={1} className='w-full'/>
+                    <col span={1} className='w-fit'/>
                     <col span={1} className='w-fit'/>
                     <col span={1} className='w-fit'/>
                     <col span={1} className='w-fit'/>

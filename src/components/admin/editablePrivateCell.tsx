@@ -2,9 +2,9 @@ import { ISetCloudSavingState } from "@/Interfaces/StatesInterfaces";
 import { TableHeader, User } from "@/types/Entities";
 import { SaveState } from "@/types/States";
 import { Row } from "@tanstack/react-table";
-import React, { Dispatch, ReactElement, ReactNode, SetStateAction } from "react";
+import React, { Dispatch, ReactNode, SetStateAction } from "react";
 import { useState } from "react";
-import EditPrivateFieldOverlay from "./EditPrivateFieldOverlay";
+import ConfirmationModal from "./ConfirmationModal";
 import { createPortal } from "react-dom";
 
 
@@ -58,13 +58,15 @@ export default function EditablePrivateCell({row, field, tableHeader, setCloudSa
     let endpoint = getEndpoint(tableHeader);
 
     const openOverlay = async () => {
+        // Block request if value doesn't change
         if (value.trim() === startValue) return;
 
+        // Block request and reset the field, if the value is empty
         if (value.trim() === "") {setValue(startValue); return;}
 
         setEditing(false);
         
-        const overlay = createPortal(<EditPrivateFieldOverlay cancelFunction={revertChanges} continueFunction={saveChange}/>, document.body);
+        const overlay = createPortal(<ConfirmationModal type="update" cancelFunction={revertChanges} continueFunction={saveChange}/>, document.body);
 
         setModal(overlay);
     }
