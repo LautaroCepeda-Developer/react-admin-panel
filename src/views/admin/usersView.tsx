@@ -89,12 +89,12 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
         {
             accessorKey:"created_at",
             header: "Created at",
-            cell: ({row}) => (<span className='py-2 px-3 text-nowrap flex-nowrap'>{new Date(row.original.created_at).toLocaleDateString('es-ar',dateOptions)}</span>)
+            cell: ({row}) => (<span className='py-2 px-3 text-nowrap flex-nowrap cursor-not-allowed'>{new Date(row.original.created_at).toLocaleDateString('es-ar',dateOptions)}</span>)
         },
         {
             accessorKey:"updated_at",
             header: "Updated at",
-            cell: ({row}) => (<span className='py-2 px-3 text-nowrap flex-nowrap'>{new Date(row.original.updated_at).toLocaleDateString('es-ar',dateOptions)}</span>)
+            cell: ({row}) => (<span className='py-2 px-3 text-nowrap flex-nowrap cursor-not-allowed'>{new Date(row.original.updated_at).toLocaleDateString('es-ar',dateOptions)}</span>)
         },
         {
             accessorKey:"delete_btn",

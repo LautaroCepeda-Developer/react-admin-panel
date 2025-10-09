@@ -115,9 +115,10 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
             onChange={(evt) => setValue(evt.target.value)}
             onBlur={saveChange}
             onKeyDown={(evt)=> evt.key === "Enter" && saveChange()}
-            autoFocus/>
+            autoFocus
+            title={field}/>
         )
     }
 
-    return <span className={`flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap ${customClassName}`} onClick={() => setEditing(true)}>{value}</span>
+    return <span className={`flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-cell ${customClassName}`} onClick={() => setEditing(true)}>{value}</span>
 }

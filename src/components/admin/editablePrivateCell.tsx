@@ -59,10 +59,10 @@ export default function EditablePrivateCell({row, field, tableHeader, setCloudSa
 
     const openOverlay = async () => {
         // Block request if value doesn't change
-        if (value.trim() === startValue) return;
+        if (value.trim() === startValue) { setEditing(false); return; };
 
         // Block request and reset the field, if the value is empty
-        if (value.trim() === "") {setValue(startValue); return;}
+        if (value.trim() === "") {setValue(startValue); setEditing(false); return;}
 
         setEditing(false);
         
@@ -143,9 +143,10 @@ export default function EditablePrivateCell({row, field, tableHeader, setCloudSa
             onChange={(evt) => setValue(evt.target.value)}
             onBlur={openOverlay}
             onKeyDown={(evt)=> evt.key === "Enter" && openOverlay()}
-            autoFocus/>
+            autoFocus
+            title={field}/>
         )
     }
 
-    return <><span className={`flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap ${customClassName}`} onClick={() => setEditing(true)}>{value}</span>{modal}</>
+    return <><span className={`flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-cell ${customClassName}`} onClick={() => setEditing(true)}>{value}</span>{modal}</>
 }
