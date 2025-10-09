@@ -60,6 +60,8 @@ export default function EditablePrivateCell({row, field, tableHeader, setCloudSa
     const openOverlay = async () => {
         if (value.trim() === startValue) return;
 
+        if (value.trim() === "") {setValue(startValue); return;}
+
         setEditing(false);
         
         const overlay = createPortal(<EditPrivateFieldOverlay cancelFunction={revertChanges} continueFunction={saveChange}/>, document.body);
@@ -134,7 +136,8 @@ export default function EditablePrivateCell({row, field, tableHeader, setCloudSa
             autoComplete="false"
             autoCapitalize="false"
             name={field + " input"}
-            value={value} 
+            value={value}
+            onFocus={() => setValue("")}
             onChange={(evt) => setValue(evt.target.value)}
             onBlur={openOverlay}
             onKeyDown={(evt)=> evt.key === "Enter" && openOverlay()}
