@@ -1,5 +1,7 @@
 export type TableHeader = "users" | "roles";
 
+export type Overlay = "update" | "delete";
+
 export type User = {
     id: number;
     fullname: string;
