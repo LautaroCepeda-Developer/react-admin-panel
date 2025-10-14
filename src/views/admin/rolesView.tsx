@@ -8,6 +8,7 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import EditableCell from "@/components/admin/editableCell";
+import DeleteRowButton from "@/components/admin/deleteRowButton";
 
 
 function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
@@ -55,6 +56,11 @@ function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
             accessorKey: "description",
             header: "Description",
             cell: ({row}) => <EditableCell row={row} field="description" tableHeader="roles" setCloudSavingState={setCloudSavingState}/>
+        },
+        {
+            accessorKey: "delete_btn",
+            header: "",
+            cell: ({row}) => (row.original.name === "superadmin" || row.original.id === 1 ? <></>: <DeleteRowButton row={row} field="delete_btn" reloadDataFunc={fetchData} setCloudSavingState={setCloudSavingState} tableHeader="roles" />)
         }
 
     ]
