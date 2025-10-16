@@ -4,6 +4,7 @@ import Footer from "@/components/footer";
 export default function App() {
     return(
     <>
+    <title>Home</title>
     <header className="flex flex-row justify-between items-center p-2.5">
         <h1 className="font-bold">COOKIE & JWT AUTH FRONTEND DEMO</h1>
         <AdminButton/>

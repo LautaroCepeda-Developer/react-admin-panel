@@ -16,6 +16,7 @@ export default function Login() {
 
     return (
     <>
+        <title>Login</title>
         <header className="flex-center w-full px-5 py-10 text-3xl" style={{fontFamily:'"Radio Canada",sans-serif'}}>ACCESS PANEL</header>
 
         <main className="flex flex-1 w-full h-full box-border justify-center items-start">
