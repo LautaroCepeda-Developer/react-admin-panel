@@ -64,27 +64,28 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
         {
             accessorKey: "fullname",
             header: "Full name",
-            cell: ({row}) => <EditableCell customClassName='text-wrap flex-wrap' row={row} field="fullname" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
+            cell: ({row}) => (row.original.id === 1 || row.original.role_name === "superadmin" || row.original.role_id === 1 ? <p className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-not-allowed">{row.original.fullname}</p>:<EditableCell customClassName='text-wrap flex-wrap' row={row} field="fullname" tableHeader="users" setCloudSavingState={setCloudSavingState}/>)
         },
         {
             accessorKey:"email",
             header: "Email",
-            cell: ({row}) => <EditableCell row={row} field="email" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
+            cell: ({row}) => (row.original.id === 1 || row.original.role_name === "superadmin" || row.original.role_id === 1 ? <p className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-not-allowed">{row.original.email}</p>:<EditableCell row={row} field="email" tableHeader="users" setCloudSavingState={setCloudSavingState}/>)
         },
         {
             accessorKey:"username",
             header: "Username",
-            cell: ({row}) => <EditablePrivateCell row={row} field="username" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
+            cell: ({row}) => (row.original.id === 1 || row.original.role_name === "superadmin" || row.original.role_id === 1 ? <p className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-not-allowed">••••••</p>:<EditablePrivateCell row={row} field="username" tableHeader="users" setCloudSavingState={setCloudSavingState}/>)
         },
         {
             accessorKey:"password",
             header: "Password",
-            cell: ({row}) => <EditablePrivateCell row={row} field="password" tableHeader="users" setCloudSavingState={setCloudSavingState}/>
+            cell: ({row}) => (row.original.id === 1 || row.original.role_name === "superadmin" || row.original.role_id === 1 ? <p className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-not-allowed">••••••</p>:<EditablePrivateCell row={row} field="password" tableHeader="users" setCloudSavingState={setCloudSavingState}/>)
         },
         {
             accessorKey:"role_name",
             header: "Role",
-            cell: ({row}) => (<span className='py-2 px-3 flex-center text-center text-nowrap'>{row.original.role_name} <span className='ml-1 opacity-70 text-xs'>(LVL {row.original.role_level})</span></span>) 
+            cell: ({row}) => (row.original.id === 1 || row.original.role_name === "superadmin" || row.original.role_id === 1 ? <span className='py-2 px-3 flex-center text-center text-nowrap cursor-not-allowed'>{row.original.role_name} <span className='ml-1 opacity-70 text-xs'>(LVL {row.original.role_level})</span></span> :
+            <span className='py-2 px-3 flex-center text-center text-nowrap'>{row.original.role_name} <span className='ml-1 opacity-70 text-xs'>(LVL {row.original.role_level})</span></span>) 
         },
         {
             accessorKey:"created_at",
@@ -99,7 +100,7 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
         {
             accessorKey:"delete_btn",
             header:"",
-            cell: ({row}) => (row.original.role_name === "superadmin" || row.original.role_level === 1 ? <></> : <DeleteRowButton row={row} field='delete_btn' reloadDataFunc={fetchData} setCloudSavingState={setCloudSavingState} tableHeader='users'/>)
+            cell: ({row}) => (row.original.role_name === "superadmin" || row.original.role_level === 1 ? <span className='flex size-10'></span> : <DeleteRowButton row={row} field='delete_btn' reloadDataFunc={fetchData} setCloudSavingState={setCloudSavingState} tableHeader='users'/>)
         }
     ]
 

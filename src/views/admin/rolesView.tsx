@@ -50,17 +50,17 @@ function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
         {
             accessorKey: "name",
             header: "Name",
-            cell: ({row}) => <EditableCell row={row} field="name" tableHeader="roles" setCloudSavingState={setCloudSavingState} />,
+            cell: ({row}) => (row.original.id === 1 || row.original.name === "superadmin" ? <p className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-not-allowed">{row.original.name}</p>: <EditableCell row={row} field="name" tableHeader="roles" setCloudSavingState={setCloudSavingState} />),
         },
         {
             accessorKey: "description",
             header: "Description",
-            cell: ({row}) => <EditableCell row={row} field="description" tableHeader="roles" setCloudSavingState={setCloudSavingState}/>
+            cell: ({row}) => (row.original.id === 1 || row.original.name === "superadmin" ? <p className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-not-allowed">{row.original.description}</p> : <EditableCell row={row} field="description" tableHeader="roles" setCloudSavingState={setCloudSavingState}/>)
         },
         {
             accessorKey: "delete_btn",
             header: "",
-            cell: ({row}) => (row.original.name === "superadmin" || row.original.id === 1 ? <></>: <DeleteRowButton row={row} field="delete_btn" reloadDataFunc={fetchData} setCloudSavingState={setCloudSavingState} tableHeader="roles" />)
+            cell: ({row}) => (row.original.name === "superadmin" || row.original.id === 1 ? <span className="flex size-10"></span>: <DeleteRowButton row={row} field="delete_btn" reloadDataFunc={fetchData} setCloudSavingState={setCloudSavingState} tableHeader="roles" />)
         }
 
     ]
