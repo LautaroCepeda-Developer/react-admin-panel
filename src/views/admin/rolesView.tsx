@@ -74,6 +74,7 @@ function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
 
     return (
     <div className="overflow-auto">
+        <title>Admin Panel - Roles</title>
         <div className='flex justify-between mb-4 h-fit gap-3'>
             <h2 className='text-lg font-bold h-full flex justify-center items-end self-end'>Roles</h2>
             

@@ -75,6 +75,7 @@ export default function Dashboard() {
 
 
     return(<>
+    <title>Admin Panel</title>
     <header className="flex flex-row w-full">
         <nav className="flex w-full flex-row p-3.5">
             <ul className="flex w-full flex-row gap-5">

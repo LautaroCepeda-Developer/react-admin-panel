@@ -1,5 +1,5 @@
 'use client'
-import '@/styles/admin/login.css'
+import "@/styles/admin/login.css"
 import LoginForm from "@/components/admin/loginForm";
 import Footer from '@/components/footer';
 import { useEffect } from 'react';
