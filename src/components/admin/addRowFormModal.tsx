@@ -1,6 +1,6 @@
 'use client'
 import { PostEntity, TableHeader, Role } from "@/types/Entities"
-import { useEffect, useState, Suspense, use } from "react"
+import { useState, Suspense } from "react"
 
 
 interface IAddRowFormModal {
@@ -12,74 +12,67 @@ interface IAddRowFormModal {
 const getEndpoint = (tableHeader : TableHeader) => 
     `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`
 
-function UserForm(roleList : any) {
-    let endpoint = getEndpoint("roles");
+
+type RolesResource = {read: () => Role[];};
+let rolesResource : RolesResource | null = null;
+
+function createRolesResource() : RolesResource {
+    let promise = fetchRoles();
+
+    return {
+        read: () => {
+            throw promise.then((roles) => (rolesResource = {read: () => roles}));
+        },
+    };
+}
+
     
-    async function getRoles(){
-        try {
-            const response = await fetch(endpoint, {
-                method: "GET",
-                headers: {"Content-Type" : "application/json"},
-                credentials: "include",
-            });
-
-            if (!response.ok) throw new Error();  
-
-            const roles : Role[] = await response.json();
-
+async function fetchRoles(): Promise<Role[]> {
+    let endpoint = getEndpoint("roles");
+    return fetch(endpoint,{
+        method: "GET",
+        headers: {"Content-Type" : "application/json"},
+        credentials: "include",})
+        .then((res) => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
+        .then((roles: Role[]) => {
             roles.shift();
+            return roles;
+        });
+}
 
-            setRoles(roles);
-        } catch (err) {
-            console.error("An error ocurred loading the roles.");
-            return {};
-        }
-    }
+function RoleSelectorOptions() {
+    if (!rolesResource) rolesResource = createRolesResource();
 
+    const roles = rolesResource.read();
+
+    return (<>
+        {roles.map((r) => (
+            <option key={r.id} value={r.name}>{r.name}</option>
+        ))}
+    </>)
+}
+
+
+function UserForm(roleList : any) {
     const [fullname, setFullname] = useState("");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("");
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [loading, setLoading] = useState(true);
-
-
-    useEffect(() => {
-        const fetchRoles = async () => {
-            try {
-                const response = await fetch(endpoint, {
-                method: "GET",
-                headers: {"Content-Type" : "application/json"},
-                credentials: "include",
-                }); 
-
-                if (!response.ok) throw new Error("Fetch Error.");
-
-                const rolesData : Role[] = await response.json();
-                rolesData.shift();
-
-                setRoles(rolesData);
-
-            } catch (error) {
-                console.error(`An error ocurred loading the roles: ${error}`)
-            } finally {
-                setLoading(false);
-            } 
-        };
-        fetchRoles();
-    },[]);
 
     return (<>
-        <input type="text" value={fullname} placeholder="Full name..." onChange={(evt) => setFullname(evt.target.value)}/>
-        <input type="email" value={email} placeholder="Email..." onChange={(evt) => setEmail(evt.target.value)}/>
-        <input type="text" value={username} placeholder="Username..." onChange={(evt) => setUsername(evt.target.value)}/>
-        <input type="password" value={password} placeholder="Password..." onChange={(evt) => setPassword(evt.target.value)}/>
+        <input name="fullname" type="text" value={fullname} placeholder="Full name..." onChange={(evt) => setFullname(evt.target.value)} autoComplete="off"/>
+        <input name="email" type="email" value={email} placeholder="Email..." onChange={(evt) => setEmail(evt.target.value)} autoComplete="off"/>
+        <input name="username" type="text" value={username} placeholder="Username..." onChange={(evt) => setUsername(evt.target.value)} autoComplete="off"/>
+        <input name="password" type="password" value={password} placeholder="Password..." onChange={(evt) => setPassword(evt.target.value)} autoComplete="off"/>
         
-        <select name="role" disabled={loading}>
-            {loading ? (<option value="">Loading...</option>) : (
-                roles.map((role:Role) => (<option key={role.id} value={role.name}>{role.name}</option>))
-            )}
+        <select name="role" defaultValue="" value={role} onChange={(evt) => setRole(evt.target.value)}>
+            <Suspense fallback={<option value="">Loading...</option>}>
+                <RoleSelectorOptions/>
+            </Suspense>
         </select>
     </>)
 }
@@ -106,9 +99,8 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
 
     return(
     <div className="flex-center top-0 left-0 w-full h-full z-500 absolute flex-1 bg-black/50">
-        <div className="flex flex-col justify-between items-center p-5 gap-5 bg-gray-300">
+        <div className="flex flex-col justify-between items-center p-5 gap-5 bg-black border-white border-2">
             {form}
-
              <div className="flex flex-row justify-between w-full">
                     <button className="flex-center bg-red-900 hover:bg-red-950 transition-colors text-white px-5 py-3 outline-2 outline-pink-950 cursor-pointer" 
                     onClick={async () => cancelFunction()}>CANCEL</button>
