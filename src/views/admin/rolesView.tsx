@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-table';
 import EditableCell from "@/components/admin/editableCell";
 import DeleteRowButton from "@/components/admin/deleteRowButton";
+import AddRowButton from "@/components/admin/addRowButton";
 
 
 function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
@@ -94,6 +95,15 @@ function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
+                                header.index == headerGroup.headers.length - 1 ?
+                                <th id="ADD-ROW-BUTTON-CONTAINER" key={header.id} className='border border-white py-2 px-3 text-left text-nowrap flex-nowrap'>
+                                    {flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                    )}
+                                    <AddRowButton tableHeader="roles" setCloudSavingState={setCloudSavingState} />
+                                </th>
+                                :
                                 <th key={header.id} className='border border-white py-2 px-3 text-left text-nowrap flex-nowrap'>
                                     {flexRender(
                                         header.column.columnDef.header,

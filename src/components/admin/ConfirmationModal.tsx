@@ -1,6 +1,4 @@
 import { Overlay } from "@/types/Entities"
-import { useEffect } from "react"
-import { createPortal } from "react-dom"
 
 interface IConfirmationModalProps {
     type: Overlay,

@@ -12,6 +12,7 @@ import { ISetCloudSavingState } from '@/Interfaces/StatesInterfaces';
 import { User, UserApiResponse } from '@/types/Entities';
 import EditablePrivateCell from '@/components/admin/editablePrivateCell';
 import DeleteRowButton from '@/components/admin/deleteRowButton';
+import AddRowButton from '@/components/admin/addRowButton';
 
 
 function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
@@ -138,6 +139,15 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
                     {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
+                                header.index == headerGroup.headers.length - 1 ?
+                                <th id="ADD-ROW-BUTTON-CONTAINER" key={header.id} className='border border-white'>
+                                    {flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                    )}
+                                    <AddRowButton setCloudSavingState={setCloudSavingState} tableHeader='users'/>
+                                </th>
+                                :
                                 <th key={header.id} className='border border-white py-2 px-3 text-left text-nowrap flex-nowrap'>
                                     {flexRender(
                                         header.column.columnDef.header,
