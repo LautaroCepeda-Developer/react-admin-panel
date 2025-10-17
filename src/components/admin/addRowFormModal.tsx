@@ -57,11 +57,12 @@ interface ICustomInput {
     name : string,
     type : HTMLInputTypeAttribute,
     placeholder: string,
+    focus?: boolean
 }
 
-function CustomInput({state, setState, name, type, placeholder}:ICustomInput) {
+function CustomInput({state, setState, name, type, placeholder, focus}:ICustomInput) {
     return (
-        <input name={name} type={type} autoComplete="off" placeholder={placeholder}
+        <input autoFocus={focus} name={name} type={type} autoComplete="off" placeholder={placeholder}
         value={state} onChange={(evt) => setState(evt.target.value)}
         className="p-2 outline-0 border-b-neutral-500 focus:border-b-neutral-200 border-b-2 w-full h-full text-white"
         />
@@ -77,7 +78,7 @@ function UserForm() {
     const [role, setRole] = useState("");
 
     return (<>
-        <CustomInput name="fullname" type="text" placeholder="Full name..."
+        <CustomInput focus={true} name="fullname" type="text" placeholder="Full name..."
         state={fullname} setState={setFullname} />
         <CustomInput name="email" type="email" placeholder="Email...."
         state={email} setState={setEmail} />
@@ -90,7 +91,7 @@ function UserForm() {
         fallback={
             <select className="flex-center w-full border-2 border-neutral-500 focus:border-neutral-200 p-2 capitalize outline-none"><option value="">Loading...</option></select>
         } >
-            <select name="role" value={role} onChange={(evt) => setRole(evt.target.value)}
+            <select title="Role selection menu" name="role" value={role} onChange={(evt) => setRole(evt.target.value)}
             className="flex-center w-full border-2 border-neutral-500 focus:border-neutral-200 p-2 capitalize outline-none" >
 
                 <option disabled value="" className="hover:bg-neutral-300 active:bg-neutral-300 bg-neutral-300 hover:text-white text-neutral-800 normal-case cursor-not-allowed ">
@@ -132,7 +133,7 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
 
     return(
     <div className="flex-center top-0 left-0 w-full h-full z-500 absolute flex-1 bg-black/50">
-        <div className="flex flex-col justify-between items-center p-5 gap-8 bg-radial from-neutral-950 to-black border-neutral-300 border-2">
+        <div className="flex flex-col justify-between items-center p-5 gap-8 bg-black border-neutral-300 border-2">
             {form}
              <div className="flex flex-row justify-between w-full gap-30">
                     <button className="flex-center bg-red-900 hover:bg-red-950 transition-colors text-white px-5 py-3 outline-2 outline-pink-950 cursor-pointer" 
