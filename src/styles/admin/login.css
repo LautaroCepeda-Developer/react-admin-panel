@@ -10,3 +10,10 @@
 ::-ms-reveal {
     filter: invert();
 }
+
+select {
+    -webkit-appearance:button !important;
+    -moz-appearance:button !important;
+    appearance:button !important;
+    cursor: pointer;
+}

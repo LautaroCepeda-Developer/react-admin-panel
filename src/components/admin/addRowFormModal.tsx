@@ -1,13 +1,7 @@
 'use client'
 import { PostEntity, TableHeader, Role } from "@/types/Entities"
-import { useState, Suspense } from "react"
-
-
-interface IAddRowFormModal {
-    cancelFunction : () => Promise<void>,
-    continueFunction : (entity : any) => Promise<void>,
-    tableHeader : TableHeader
-}
+import { useState, Suspense, SetStateAction, HTMLInputTypeAttribute } from "react"
+import "@/styles/admin/login.css"
 
 const getEndpoint = (tableHeader : TableHeader) => 
     `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`
@@ -50,13 +44,32 @@ function RoleSelectorOptions() {
 
     return (<>
         {roles.map((r) => (
-            <option key={r.id} value={r.name}>{r.name}</option>
+            <option key={r.id} value={r.name}
+            className="bg-neutral-300 hover:text-white text-neutral-800"
+            >{r.name}</option>
         ))}
     </>)
 }
 
+interface ICustomInput {
+    state : string,
+    setState : (value: SetStateAction<string>) => void,
+    name : string,
+    type : HTMLInputTypeAttribute,
+    placeholder: string,
+}
 
-function UserForm(roleList : any) {
+function CustomInput({state, setState, name, type, placeholder}:ICustomInput) {
+    return (
+        <input name={name} type={type} autoComplete="off" placeholder={placeholder}
+        value={state} onChange={(evt) => setState(evt.target.value)}
+        className="p-2 outline-0 border-b-neutral-500 focus:border-b-neutral-200 border-b-2 w-full h-full text-white"
+        />
+    )
+}
+
+
+function UserForm() {
     const [fullname, setFullname] = useState("");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
@@ -64,22 +77,42 @@ function UserForm(roleList : any) {
     const [role, setRole] = useState("");
 
     return (<>
-        <input name="fullname" type="text" value={fullname} placeholder="Full name..." onChange={(evt) => setFullname(evt.target.value)} autoComplete="off"/>
-        <input name="email" type="email" value={email} placeholder="Email..." onChange={(evt) => setEmail(evt.target.value)} autoComplete="off"/>
-        <input name="username" type="text" value={username} placeholder="Username..." onChange={(evt) => setUsername(evt.target.value)} autoComplete="off"/>
-        <input name="password" type="password" value={password} placeholder="Password..." onChange={(evt) => setPassword(evt.target.value)} autoComplete="off"/>
+        <CustomInput name="fullname" type="text" placeholder="Full name..."
+        state={fullname} setState={setFullname} />
+        <CustomInput name="email" type="email" placeholder="Email...."
+        state={email} setState={setEmail} />
+        <CustomInput name="username" type="text" placeholder="Username..."
+        state={username} setState={setUsername} />
+        <CustomInput name="password" type="password" placeholder="Password..."
+        state={password} setState={setPassword} />
         
-        <select name="role" defaultValue="" value={role} onChange={(evt) => setRole(evt.target.value)}>
-            <Suspense fallback={<option value="">Loading...</option>}>
+        <Suspense 
+        fallback={
+            <select className="flex-center w-full border-2 border-neutral-500 focus:border-neutral-200 p-2 capitalize outline-none"><option value="">Loading...</option></select>
+        } >
+            <select name="role" value={role} onChange={(evt) => setRole(evt.target.value)}
+            className="flex-center w-full border-2 border-neutral-500 focus:border-neutral-200 p-2 capitalize outline-none" >
+
+                <option disabled value="" className="hover:bg-neutral-300 active:bg-neutral-300 bg-neutral-300 hover:text-white text-neutral-800 normal-case cursor-not-allowed ">
+                    Select role...
+                </option>
+
                 <RoleSelectorOptions/>
-            </Suspense>
-        </select>
+            </select>
+        </Suspense>
+
     </>)
 }
 
 function RoleForm() {
     return(<>
     </>)
+}
+
+interface IAddRowFormModal {
+    cancelFunction : () => Promise<void>,
+    continueFunction : (entity : any) => Promise<void>,
+    tableHeader : TableHeader
 }
 
 export default function AddRowFormModal({tableHeader, continueFunction, cancelFunction} : IAddRowFormModal) {
@@ -99,9 +132,9 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
 
     return(
     <div className="flex-center top-0 left-0 w-full h-full z-500 absolute flex-1 bg-black/50">
-        <div className="flex flex-col justify-between items-center p-5 gap-5 bg-black border-white border-2">
+        <div className="flex flex-col justify-between items-center p-5 gap-8 bg-radial from-neutral-950 to-black border-neutral-300 border-2">
             {form}
-             <div className="flex flex-row justify-between w-full">
+             <div className="flex flex-row justify-between w-full gap-30">
                     <button className="flex-center bg-red-900 hover:bg-red-950 transition-colors text-white px-5 py-3 outline-2 outline-pink-950 cursor-pointer" 
                     onClick={async () => cancelFunction()}>CANCEL</button>
                     <button className="flex-center bg-green-800 hover:bg-green-950 outline-2 outline-lime-950 transition-colors text-white px-5 py-3 cursor-pointer"
