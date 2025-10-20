@@ -4,6 +4,7 @@ import { SaveState } from "@/types/States";
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "./ConfirmationModal";
+import { Tooltip } from "react-tooltip";
 
 interface IDeleteRowButtonProps {
     row: any,
@@ -59,7 +60,8 @@ export default function DeleteRowButton({row,field,tableHeader,setCloudSavingSta
 
     return(
     <>
-    <input type="button" className="flex-center flex-1  cursor-pointer flex font-bold text-red-950 hover:text-red-900 no-select field-sizing-content p-full size-10" onClick={openOverlay} value="X"/>
+    <input data-tooltip-id={`DELETE-${tableHeader.substring(0, tableHeader.length - 1)}-BUTTON-TOOLTIP`} data-tooltip-content={`Delete ${tableHeader.substring(0, tableHeader.length - 1)}`} type="button" className="flex-center flex-1  cursor-pointer flex font-bold text-red-950 hover:text-red-900 no-select field-sizing-content p-full size-10" onClick={openOverlay} value="X"/>
+    <Tooltip id={`DELETE-${tableHeader.substring(0, tableHeader.length - 1)}-BUTTON-TOOLTIP`} />
     {modal}
     </>)
 
