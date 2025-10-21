@@ -3,6 +3,8 @@ import InputField from "./loginInput";
 import LockIcon from "@/media/lockIcon";
 import { FormEvent, ReactElement, useState } from "react";
 import { Tooltip } from 'react-tooltip'
+import { NotificationContextType, useNotify } from "../notificationProvider";
+import { BackendError } from "@/types/Entities";
 
 const apiUrl :string = process.env.NEXT_PUBLIC_API_URL!; 
 
@@ -20,7 +22,7 @@ async function parseFields(form : FormData) {
 }
 
 
-async function HandleLogin(e:FormEvent) : Promise<void> {
+async function HandleLogin(e:FormEvent, notify : NotificationContextType) : Promise<void> {
     e.preventDefault();
 
     const form : HTMLFormElement = document.getElementById("LOGIN-FORM")! as HTMLFormElement;
@@ -29,6 +31,15 @@ async function HandleLogin(e:FormEvent) : Promise<void> {
 
     await parseFields(formData);
 
+    let invalidFields = 0;
+    formData.entries().forEach((element) => {
+        if (element[1] === null || element[1].toString().length < 3) {
+            invalidFields += 1;
+            notify(`WARNING [${element[0]}]`, `Required at least 3 characters.`, "WARNING");
+        }
+    });
+
+    if (invalidFields > 0) return;
 
     const res = await fetch(`${apiUrl}/auth/login`, {
         method:'POST',
@@ -38,7 +49,11 @@ async function HandleLogin(e:FormEvent) : Promise<void> {
     })
     
     if (!res.ok) {
-        const data = await res.json();
+        const error = await res.json().then((err) => err.message);
+
+        notify(`ERROR [fields]`,`${error}`,"ERROR");
+
+        return;
     }
 
     // Redirect to dashboard on login
@@ -47,9 +62,7 @@ async function HandleLogin(e:FormEvent) : Promise<void> {
 
 
 export default function LoginForm() {
-    const [error, setError] = useState(false);
-    const [errorInfo, setErrorInfo] = useState("");
-
+    const notify = useNotify();
 
     const color : string = "#FFF"
 
@@ -60,7 +73,7 @@ export default function LoginForm() {
 
 
     return(
-        <form id="LOGIN-FORM" method="POST" onSubmit={HandleLogin} autoComplete="on" className="flex flex-col w-full md:w-1/2 box-border gap-8 px-5">
+        <form id="LOGIN-FORM" method="POST" onSubmit={(evt) => HandleLogin(evt,notify)} autoComplete="on" className="flex flex-col w-full md:w-1/2 box-border gap-8 px-5">
             <InputField fieldId="LOGIN-FORM-USERNAME" fieldName="username" fieldPlaceholder="Username..." hideChars={false} autoComplete="username" fieldIcon={userIcon}/>
 
             <div>
