@@ -1,6 +1,5 @@
 'use client'
 
-import CustomPopup from "@/components/admin/customPopup";
 import LogoutButton from "@/components/admin/logoutButton";
 import Footer from "@/components/footer";
 import CloudArrowUpIcon from "@/components/Icons/cloudArrowUpIcon";

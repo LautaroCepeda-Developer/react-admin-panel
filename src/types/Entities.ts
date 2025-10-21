@@ -43,3 +43,8 @@ export type UserApiResponse = {
     totalPages: number,
     usersFiltered: User[],
 };
+
+export type BackendError = {
+    path: string[]
+    message: string
+}
