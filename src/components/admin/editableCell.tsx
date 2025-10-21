@@ -58,11 +58,11 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
     let endpoint = getEndpoint(tableHeader);
 
     const saveChange = async () => {
-        setValue(value.trim());
+        setValue(value.toString().trim());
         setEditing(false);
 
         // Prevent fetching
-        if (value.trim() === startValue) return;
+        if (value.toString().trim() === startValue) return;
 
         try {
 
@@ -88,12 +88,12 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
             }
 
             // Setting a new "Default value"
-            setStartValue(value.trim());
+            setStartValue(value.toString().trim());
 
         } catch (error) {
             changeSaveState("ERROR", {setCloudSavingState});
             // Reverting the changes
-            setValue(startValue.trim());
+            setValue(startValue.toString().trim());
 
             // Reverting the 'updated at field' (if exists)
             if (row.original["updated_at"]) {
@@ -106,7 +106,7 @@ export default function EditableCell({row, field, tableHeader, setCloudSavingSta
     if (editing) {
         
         return (
-            <input className="py-2 px-3 m-0 field-sizing-content w-full"
+            <input className={`py-2 px-3 m-0 field-sizing-content w-full ${customClassName}`}
             spellCheck="false"
             autoComplete="false"
             autoCapitalize="false"
