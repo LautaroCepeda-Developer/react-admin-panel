@@ -28,6 +28,7 @@ export type PostUserDTO = {
 export type PostRoleDTO = {
     name: string,
     description: string,
+    level: string
 }
 
 export type Role = {

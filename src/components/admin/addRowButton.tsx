@@ -19,9 +19,12 @@ const changeSaveState = (state:SaveState, {setCloudSavingState} : ISetCloudSavin
 
 
 const getEndpoint = (tableHeader : TableHeader) => {
-    if (tableHeader == "roles") return `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`;
-
-    return `${process.env.NEXT_PUBLIC_API_URL}/auth/register/`;
+    switch (tableHeader) {
+        case "roles":
+            return `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`;
+        case "users":
+            return `${process.env.NEXT_PUBLIC_API_URL}/auth/register/`
+    }
 }
 
 export default function AddRowButton({tableHeader, setCloudSavingState, reloadDataFunc}:IAddRowButtonProps) {
@@ -42,18 +45,15 @@ export default function AddRowButton({tableHeader, setCloudSavingState, reloadDa
                 body: JSON.stringify(entity)
             });
 
-            if (!response.ok && response.status === 400) {
+            if (!response.ok) {
                 const error = JSON.parse(await response.json().then((e) => e.message)) as BackendError[];
    
                 error.forEach((err) => {
-                    notify("ERROR",`Field[${err.path[0]}]: ${err.message}`, "ERROR");
+                    notify(`ERROR (${err.path[0]})`,`${err.message}`, "ERROR");
                 })
                 
                 changeSaveState("SAVING", {setCloudSavingState})
                 return;
-            }
-            else if (!response.ok) {
-                throw new Error(`An error ocurred creating the ${tableHeader.substring(0, tableHeader.length - 1)}`)
             }
             setModal(null);
             

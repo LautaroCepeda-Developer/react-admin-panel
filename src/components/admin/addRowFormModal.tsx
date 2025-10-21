@@ -63,7 +63,13 @@ interface ICustomInput {
 function CustomInput({state, setState, name, type, placeholder, focus}:ICustomInput) {
     return (
         <input autoFocus={focus} name={name} type={type} autoComplete="off" placeholder={placeholder}
-        value={state} onChange={(evt) => setState(evt.target.value)}
+        value={state}
+        onKeyDownCapture={(evt) => 
+            {if (evt.key === "." || evt.key === "," || evt.key === "-") 
+                { evt.stopPropagation(); evt.preventDefault(); }
+            }
+            } 
+        onChange={(evt) => setState(evt.target.value)} min="1" step="1"
         className="p-2 outline-0 border-b-neutral-500 focus:border-b-neutral-200 border-b-2 w-full h-full text-white"
         />
     )
@@ -113,8 +119,22 @@ function UserForm({setEntity}:IEntityFormProps) {
     </>)
 }
 
-function RoleForm() {
+function RoleForm({setEntity}:IEntityFormProps) {
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [level, setLevel] = useState("");
+
+    useEffect(() => {
+        setEntity({name:name, description:description, level:level})
+    }, [name, description, level])
+
     return(<>
+        <CustomInput focus={true} name="name" type="text" placeholder="Role name..."
+        state={name} setState={setName}/>
+        <CustomInput name="description" type="text" placeholder="Description..."
+        state={description} setState={setDescription}/>
+        <CustomInput name="level" type="number" placeholder="Access level..."
+        state={level} setState={setLevel} />
     </>)
 }
 
@@ -139,7 +159,6 @@ function isEntityValid(entity : PostEntity | null) : boolean {
 export default function AddRowFormModal({tableHeader, continueFunction, cancelFunction} : IAddRowFormModal) {
     const [entity, setEntity] = useState<PostEntity | null>(null)
 
-
     let form;
 
     switch (tableHeader) {
@@ -147,7 +166,7 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
             form = <UserForm setEntity={setEntity}/>
             break;
         case "roles":
-            form = <RoleForm />
+            form = <RoleForm  setEntity={setEntity}/>
             break;
     }
 

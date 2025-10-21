@@ -1,6 +1,6 @@
 import { Role } from "@/types/Entities";
 import { ISetCloudSavingState } from "@/Interfaces/StatesInterfaces";
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useState, useEffect } from "react";
 import {
     ColumnDef,
     flexRender,
@@ -101,7 +101,7 @@ function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
                                         header.column.columnDef.header,
                                         header.getContext()
                                     )}
-                                    <AddRowButton tableHeader="roles" setCloudSavingState={setCloudSavingState} />
+                                    <AddRowButton tableHeader="roles" setCloudSavingState={setCloudSavingState} reloadDataFunc={fetchData}/>
                                 </th>
                                 :
                                 <th key={header.id} className='border border-white py-2 px-3 text-left text-nowrap flex-nowrap'>
