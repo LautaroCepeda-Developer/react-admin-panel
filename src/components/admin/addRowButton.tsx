@@ -5,7 +5,7 @@ import React, { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { createPortal } from "react-dom"
 import { Tooltip } from 'react-tooltip'
 import AddRowFormModal, { resetRolesResource } from "./addRowFormModal"
-import { useNotify } from "../notificationProvider"
+import { useNotify } from "@/components/notificationProvider";
 
 interface IAddRowButtonProps {
     tableHeader : TableHeader,

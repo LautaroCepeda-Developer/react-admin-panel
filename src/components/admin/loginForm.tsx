@@ -1,10 +1,9 @@
 import UserIcon from "@/media/userIcon";
 import InputField from "./loginInput";
 import LockIcon from "@/media/lockIcon";
-import { FormEvent, ReactElement, useState } from "react";
+import { FormEvent, ReactElement } from "react";
 import { Tooltip } from 'react-tooltip'
-import { NotificationContextType, useNotify } from "../notificationProvider";
-import { BackendError } from "@/types/Entities";
+import { NotificationContextType, useNotify } from "@/components/notificationProvider";
 
 const apiUrl :string = process.env.NEXT_PUBLIC_API_URL!; 
 

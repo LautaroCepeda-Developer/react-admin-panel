@@ -59,6 +59,13 @@ function RolesTable({setCloudSavingState} : ISetCloudSavingState) {
             cell: ({row}) => (row.original.id === 1 || row.original.name === "superadmin" ? <p className="flex py-2 px-3 w-full h-fit m-0 box-border text-nowrap cursor-not-allowed">{row.original.description}</p> : <EditableCell row={row} field="description" tableHeader="roles" setCloudSavingState={setCloudSavingState}/>)
         },
         {
+            accessorKey: "level",
+            header: "Level",
+            cell: ({row}) => (row.original.id === 1 || row.original.name === "superadmin" ? <p
+            className="flex py-2 px-3 w-full h-fit m-0 text-center flex-center font-semibold box-border text-nowrap cursor-not-allowed">{row.original.level}
+            </p> : <EditableCell customClassName="text-center font-semibold flex-center" row={row} field="level" tableHeader="roles" setCloudSavingState={setCloudSavingState}/>)
+        },
+        {
             accessorKey: "delete_btn",
             header: "",
             cell: ({row}) => (row.original.name === "superadmin" || row.original.id === 1 ? <span className="flex size-10"></span>: <DeleteRowButton row={row} field="delete_btn" reloadDataFunc={fetchData} setCloudSavingState={setCloudSavingState} tableHeader="roles" />)

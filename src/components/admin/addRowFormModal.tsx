@@ -2,7 +2,7 @@
 import { PostEntity, TableHeader, Role, PostUserDTO } from "@/types/Entities"
 import { useState, Suspense, SetStateAction, HTMLInputTypeAttribute, useEffect, Dispatch } from "react"
 import "@/styles/admin/login.css"
-import { NotificationContextType, useNotify } from "../notificationProvider"
+import { NotificationContextType, useNotify } from "@/components/notificationProvider";
 
 const getEndpoint = (tableHeader : TableHeader) => 
     `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`
