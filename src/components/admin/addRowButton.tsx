@@ -1,7 +1,7 @@
 import { ISetCloudSavingState } from "@/Interfaces/StatesInterfaces"
-import { BackendError, Entity, PostEntity, TableHeader } from "@/types/Entities"
+import { BackendError, PostEntity, TableHeader } from "@/types/Entities"
 import { SaveState } from "@/types/States"
-import React, { Dispatch, ReactNode, ReactPortal, SetStateAction, useEffect, useState } from "react"
+import React, { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { createPortal } from "react-dom"
 import { Tooltip } from 'react-tooltip'
 import AddRowFormModal from "./addRowFormModal"
@@ -12,6 +12,11 @@ interface IAddRowButtonProps {
     setCloudSavingState : Dispatch<SetStateAction<SaveState>>,
     reloadDataFunc : () => Promise<void>
 }
+
+const changeSaveState = (state:SaveState, {setCloudSavingState} : ISetCloudSavingState) => {
+    setCloudSavingState(state);
+}
+
 
 const getEndpoint = (tableHeader : TableHeader) => {
     if (tableHeader == "roles") return `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`;
@@ -29,7 +34,7 @@ export default function AddRowButton({tableHeader, setCloudSavingState, reloadDa
         if (entity == null) return;
         
         try {
-            setCloudSavingState("SAVING");
+            changeSaveState("SAVING", {setCloudSavingState})
             const response = await fetch(endpoint, {
                 method: "POST",
                 headers: {"Content-Type":"application/json"},
@@ -44,7 +49,7 @@ export default function AddRowButton({tableHeader, setCloudSavingState, reloadDa
                     notify("ERROR",`Field[${err.path[0]}]: ${err.message}`, "ERROR");
                 })
                 
-
+                changeSaveState("SAVING", {setCloudSavingState})
                 return;
             }
             else if (!response.ok) {
@@ -52,17 +57,17 @@ export default function AddRowButton({tableHeader, setCloudSavingState, reloadDa
             }
             setModal(null);
             
-            setCloudSavingState("SAVED");
+            changeSaveState("SAVED", {setCloudSavingState})
             reloadDataFunc();
         } catch (error) {
             setModal(null);
-            setCloudSavingState("ERROR");
+            changeSaveState("ERROR", {setCloudSavingState})
         }
     }
 
     const closeOverlay = async() => {
         setModal(null);
-        setCloudSavingState("SAVED");
+        changeSaveState("SAVED", {setCloudSavingState})
     }
  
     const openOverlay = async() => {
