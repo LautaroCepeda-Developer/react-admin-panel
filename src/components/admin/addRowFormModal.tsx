@@ -1,6 +1,6 @@
 'use client'
-import { PostEntity, TableHeader, Role } from "@/types/Entities"
-import { useState, Suspense, SetStateAction, HTMLInputTypeAttribute } from "react"
+import { PostEntity, TableHeader, Role, PostUserDTO } from "@/types/Entities"
+import { useState, Suspense, SetStateAction, HTMLInputTypeAttribute, useEffect, Dispatch } from "react"
 import "@/styles/admin/login.css"
 
 const getEndpoint = (tableHeader : TableHeader) => 
@@ -70,12 +70,20 @@ function CustomInput({state, setState, name, type, placeholder, focus}:ICustomIn
 }
 
 
-function UserForm() {
+interface IEntityFormProps {
+    setEntity: Dispatch<SetStateAction<PostEntity | null>>
+}
+
+function UserForm({setEntity}:IEntityFormProps) {
     const [fullname, setFullname] = useState("");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("");
+
+    useEffect(() => {
+        setEntity({fullname:fullname, email:email, username:username, password:password, role:role})
+    }, [fullname,email,username,password,role])
 
     return (<>
         <CustomInput focus={true} name="fullname" type="text" placeholder="Full name..."
@@ -112,19 +120,31 @@ function RoleForm() {
 
 interface IAddRowFormModal {
     cancelFunction : () => Promise<void>,
-    continueFunction : (entity : any) => Promise<void>,
+    continueFunction : (entity : PostEntity | null) => Promise<void>,
     tableHeader : TableHeader
 }
 
-export default function AddRowFormModal({tableHeader, continueFunction, cancelFunction} : IAddRowFormModal) {
+function isEntityValid(entity : PostEntity | null) : boolean {
+    if (entity == null) return false;
+    const castedEntity = entity as any;
+    for (const key in castedEntity) {
+        if (!castedEntity || castedEntity[`${key}`].trim() == "") {
+            return false;
+        }
+    }
 
+    return true;
+}
+
+export default function AddRowFormModal({tableHeader, continueFunction, cancelFunction} : IAddRowFormModal) {
     const [entity, setEntity] = useState<PostEntity | null>(null)
+
 
     let form;
 
     switch (tableHeader) {
         case "users":
-            form = <UserForm />
+            form = <UserForm setEntity={setEntity}/>
             break;
         case "roles":
             form = <RoleForm />
@@ -133,14 +153,18 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
 
     return(
     <div className="flex-center top-0 left-0 w-full h-full z-500 absolute flex-1 bg-black/50">
-        <div className="flex flex-col justify-between items-center p-5 gap-8 bg-black border-neutral-300 border-2">
+        <form className="flex flex-col justify-between items-center p-5 gap-8 bg-black border-neutral-300 border-2">
             {form}
              <div className="flex flex-row justify-between w-full gap-30">
                     <button className="flex-center bg-red-900 hover:bg-red-950 transition-colors text-white px-5 py-3 outline-2 outline-pink-950 cursor-pointer" 
                     onClick={async () => cancelFunction()}>CANCEL</button>
-                    <button className="flex-center bg-green-800 hover:bg-green-950 outline-2 outline-lime-950 transition-colors text-white px-5 py-3 cursor-pointer"
-                    onClick={async () => continueFunction(entity)}>CREATE</button>
+                    <button type="submit" className="flex-center bg-green-800 hover:bg-green-950 outline-2 outline-lime-950 transition-colors text-white px-5 py-3 cursor-pointer"
+                    onClick={async (evt) => {
+                        evt.preventDefault();
+                        if (!isEntityValid(entity)) return;
+                        continueFunction(entity);
+                    }}>CREATE</button>
                 </div>
-        </div>
+        </form>
     </div>
 )}

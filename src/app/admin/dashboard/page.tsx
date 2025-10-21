@@ -1,11 +1,13 @@
 'use client'
 
+import CustomPopup from "@/components/admin/customPopup";
 import LogoutButton from "@/components/admin/logoutButton";
 import Footer from "@/components/footer";
 import CloudArrowUpIcon from "@/components/Icons/cloudArrowUpIcon";
 import CloudCheckIcon from "@/components/Icons/cloudCheckIcon";
 import CloudExclamationIcon from "@/components/Icons/cloudExclamationIcon";
 import NavItem from "@/components/navItem";
+import { NotificationProvider } from "@/components/notificationProvider";
 import { SaveState } from "@/types/States";
 import { lazy, Suspense, JSX, useState, useEffect, ReactElement } from "react";
 import { Tooltip } from 'react-tooltip'
@@ -75,6 +77,7 @@ export default function Dashboard() {
 
 
     return(<>
+    <NotificationProvider>
     <title>Admin Panel</title>
     <header className="flex flex-row w-full">
         <nav className="flex w-full flex-row p-3.5">
@@ -104,7 +107,7 @@ export default function Dashboard() {
             {currentView}
         </Suspense>
     </main>
-
     <Footer/>
+    </NotificationProvider>
     </>)
 }

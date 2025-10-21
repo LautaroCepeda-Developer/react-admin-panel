@@ -145,7 +145,7 @@ function UsersTable({setCloudSavingState} : ISetCloudSavingState) {
                                         header.column.columnDef.header,
                                         header.getContext()
                                     )}
-                                    <AddRowButton setCloudSavingState={setCloudSavingState} tableHeader='users'/>
+                                    <AddRowButton setCloudSavingState={setCloudSavingState} tableHeader='users' reloadDataFunc={fetchData}/>
                                 </th>
                                 :
                                 <th key={header.id} className='border border-white py-2 px-3 text-left text-nowrap flex-nowrap'>
