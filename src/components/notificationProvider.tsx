@@ -10,7 +10,7 @@ type NotificationData = {
     message: string,
     appearing?: boolean
 }
-type NotificationContextType = (
+export type NotificationContextType = (
     title:string,
     message:string,
     type: NotificationType,

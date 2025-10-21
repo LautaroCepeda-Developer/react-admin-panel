@@ -2,6 +2,7 @@
 import { PostEntity, TableHeader, Role, PostUserDTO } from "@/types/Entities"
 import { useState, Suspense, SetStateAction, HTMLInputTypeAttribute, useEffect, Dispatch } from "react"
 import "@/styles/admin/login.css"
+import { NotificationContextType, useNotify } from "../notificationProvider"
 
 const getEndpoint = (tableHeader : TableHeader) => 
     `${process.env.NEXT_PUBLIC_API_URL}/people/${tableHeader}/`
@@ -141,24 +142,29 @@ function RoleForm({setEntity}:IEntityFormProps) {
 interface IAddRowFormModal {
     cancelFunction : () => Promise<void>,
     continueFunction : (entity : PostEntity | null) => Promise<void>,
-    tableHeader : TableHeader
+    tableHeader : TableHeader,
 }
 
-function isEntityValid(entity : PostEntity | null) : boolean {
+function isEntityValid(entity : PostEntity | null, notify : NotificationContextType) : boolean {
+    let invalidFields = 0;
+
     if (entity == null) return false;
     const castedEntity = entity as any;
     for (const key in castedEntity) {
         if (!castedEntity || castedEntity[`${key}`].trim() == "") {
-            return false;
+            if (key != "description") {
+                invalidFields += 1;
+            }
+            notify(`WARNING [${key}]`,"This field cannot be empty.","WARNING")
         }
     }
 
-    return true;
+    return invalidFields === 0;
 }
 
 export default function AddRowFormModal({tableHeader, continueFunction, cancelFunction} : IAddRowFormModal) {
     const [entity, setEntity] = useState<PostEntity | null>(null)
-
+    const notify = useNotify();
     let form;
 
     switch (tableHeader) {
@@ -180,7 +186,7 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
                     <button type="submit" className="flex-center bg-green-800 hover:bg-green-950 outline-2 outline-lime-950 transition-colors text-white px-5 py-3 cursor-pointer"
                     onClick={async (evt) => {
                         evt.preventDefault();
-                        if (!isEntityValid(entity)) return;
+                        if (!isEntityValid(entity, notify)) return;
                         continueFunction(entity);
                     }}>CREATE</button>
                 </div>
