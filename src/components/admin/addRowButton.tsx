@@ -4,7 +4,7 @@ import { SaveState } from "@/types/States"
 import React, { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { createPortal } from "react-dom"
 import { Tooltip } from 'react-tooltip'
-import AddRowFormModal from "./addRowFormModal"
+import AddRowFormModal, { resetRolesResource } from "./addRowFormModal"
 import { useNotify } from "../notificationProvider"
 
 interface IAddRowButtonProps {
@@ -31,7 +31,14 @@ export default function AddRowButton({tableHeader, setCloudSavingState, reloadDa
     const notify = useNotify();
     const [modal, setModal] = useState<ReactNode>(null);
 
+    const closeModal = () => {
+        setModal(null);
+        resetRolesResource();
+    }
+
+
     let endpoint = getEndpoint(tableHeader);
+
 
     const createEntity = async (entity : PostEntity | null) => {
         if (entity == null) return;
@@ -55,24 +62,24 @@ export default function AddRowButton({tableHeader, setCloudSavingState, reloadDa
                 changeSaveState("SAVING", {setCloudSavingState})
                 return;
             }
-            setModal(null);
+            closeModal();
             
             changeSaveState("SAVED", {setCloudSavingState})
             reloadDataFunc();
         } catch (error) {
-            setModal(null);
+            closeModal();
             changeSaveState("ERROR", {setCloudSavingState})
         }
     }
 
     const closeOverlay = async() => {
-        setModal(null);
+        closeModal();
         changeSaveState("SAVED", {setCloudSavingState})
     }
  
     const openOverlay = async() => {
         const overlay = createPortal(<AddRowFormModal tableHeader={tableHeader}
-        cancelFunction={closeOverlay} continueFunction={createEntity}/>, document.body);
+        cancelFunction={closeOverlay} continueFunction={createEntity} />, document.body);
         setModal(overlay);
     }
 

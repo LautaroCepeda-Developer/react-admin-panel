@@ -21,6 +21,10 @@ function createRolesResource() : RolesResource {
     };
 }
 
+export function resetRolesResource() {
+    rolesResource = null;
+}
+
     
 async function fetchRoles(): Promise<Role[]> {
     let endpoint = getEndpoint("roles");
@@ -66,11 +70,17 @@ function CustomInput({state, setState, name, type, placeholder, focus}:ICustomIn
         <input autoFocus={focus} name={name} type={type} autoComplete="off" placeholder={placeholder}
         value={state}
         onKeyDownCapture={(evt) => 
-            {if (evt.key === "." || evt.key === "," || evt.key === "-") 
+            {if (type === "email" && evt.key === ",") 
+                { evt.stopPropagation(); evt.preventDefault(); }
+            else if (type === "number" && (evt.key === "." || evt.key === "," || evt.key === "-")) 
                 { evt.stopPropagation(); evt.preventDefault(); }
             }
-            } 
-        onChange={(evt) => setState(evt.target.value)} min="1" step="1"
+        } 
+        onChange={(evt) => {
+            type == "email" ? 
+            setState(evt.target.value.toLowerCase()) : setState(evt.target.value)
+    
+        }} min="1" step="1"
         className="p-2 outline-0 border-b-neutral-500 focus:border-b-neutral-200 border-b-2 w-full h-full text-white"
         />
     )
@@ -78,7 +88,7 @@ function CustomInput({state, setState, name, type, placeholder, focus}:ICustomIn
 
 
 interface IEntityFormProps {
-    setEntity: Dispatch<SetStateAction<PostEntity | null>>
+    setEntity: Dispatch<SetStateAction<PostEntity | null>>,
 }
 
 function UserForm({setEntity}:IEntityFormProps) {
@@ -102,7 +112,7 @@ function UserForm({setEntity}:IEntityFormProps) {
         <CustomInput name="password" type="password" placeholder="Password..."
         state={password} setState={setPassword} />
         
-        <Suspense 
+        <Suspense
         fallback={
             <select className="flex-center w-full border-2 border-neutral-500 focus:border-neutral-200 p-2 capitalize outline-none"><option value="">Loading...</option></select>
         } >
@@ -169,7 +179,7 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
 
     switch (tableHeader) {
         case "users":
-            form = <UserForm setEntity={setEntity}/>
+            form = <UserForm setEntity={setEntity} />
             break;
         case "roles":
             form = <RoleForm  setEntity={setEntity}/>
