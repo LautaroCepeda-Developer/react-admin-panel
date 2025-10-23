@@ -191,7 +191,7 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
              <div className="flex flex-row justify-between w-full gap-30">
                     <button className="flex-center bg-red-900 hover:bg-red-950 transition-colors text-white px-5 py-3 outline-2 outline-pink-950 cursor-pointer" 
                     onClick={async () => cancelFunction()}>CANCEL</button>
-                    <button type="submit" className="flex-center bg-green-800 hover:bg-green-950 outline-2 outline-lime-950 transition-colors text-white px-5 py-3 cursor-pointer"
+                    <button type="button" className="flex-center bg-green-800 hover:bg-green-950 outline-2 outline-lime-950 transition-colors text-white px-5 py-3 cursor-pointer"
                     onClick={async (evt) => {
                         evt.preventDefault();
                         if (!isEntityValid(entity, notify)) return;
