@@ -186,7 +186,7 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
 
     return(
     <div className="flex-center top-0 left-0 w-full h-full z-500 absolute flex-1 bg-black/50">
-        <form className="flex flex-col justify-between items-center p-5 gap-8 bg-black border-neutral-300 border-2">
+        <div className="flex flex-col justify-between items-center p-5 gap-8 bg-black border-neutral-300 border-2">
             {form}
              <div className="flex flex-row justify-between w-full gap-30">
                     <button className="flex-center bg-red-900 hover:bg-red-950 transition-colors text-white px-5 py-3 outline-2 outline-pink-950 cursor-pointer" 
@@ -198,6 +198,6 @@ export default function AddRowFormModal({tableHeader, continueFunction, cancelFu
                         continueFunction(entity);
                     }}>CREATE</button>
                 </div>
-        </form>
+        </div>
     </div>
 )}
