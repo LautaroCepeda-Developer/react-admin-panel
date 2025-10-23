@@ -161,10 +161,8 @@ function isEntityValid(entity : PostEntity | null, notify : NotificationContextT
     if (entity == null) return false;
     const castedEntity = entity as any;
     for (const key in castedEntity) {
-        if (!castedEntity || castedEntity[`${key}`].trim() == "") {
-            if (key != "description") {
-                invalidFields += 1;
-            }
+        if ((!castedEntity || castedEntity[`${key}`].trim() == "" ) && key != "description") {
+            invalidFields += 1;
             notify(`WARNING [${key}]`,"This field cannot be empty.","WARNING")
         }
     }
