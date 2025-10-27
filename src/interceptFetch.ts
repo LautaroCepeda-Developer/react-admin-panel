@@ -5,8 +5,12 @@ export function interceptFetch() {
         const response = await originalFetch(...args);
 
         if (response.status === 403 || response.status === 401) {
-
-          window.location.href = "/admin/login";
+          
+			// Sending a promise to not block the thread
+			new Promise(() => {
+				setTimeout(() => window.location.href = "/admin/login", 1500);
+			})
+        	
         }
 
     return response;
