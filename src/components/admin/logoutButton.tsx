@@ -1,5 +1,3 @@
-'use client'
-
 async function Logout() {
     const apiUrl :string = process.env.NEXT_PUBLIC_API_URL!; 
     const res = await fetch(`${apiUrl}/auth/logout`, {
@@ -8,7 +6,8 @@ async function Logout() {
     credentials: 'include'})
     
     if (!res.ok) {
-        await cookieStore.delete("authCookie");
+        // The cookie is HTTP-Only so this should do absolutely nothing.
+        document.cookie = "authCookie=; Max-Age=0; path=/;"
     }
 
     window.location.href = "/admin/login";
