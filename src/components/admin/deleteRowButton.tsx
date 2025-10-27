@@ -5,6 +5,7 @@ import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import { Tooltip } from "react-tooltip";
+import { useNotify } from "../notificationProvider";
 
 interface IDeleteRowButtonProps {
     row: any,
@@ -23,7 +24,7 @@ const getEndpoint = (tableHeader : TableHeader) =>
 
 export default function DeleteRowButton({row,field,tableHeader,setCloudSavingState, reloadDataFunc}:IDeleteRowButtonProps) {
     const [modal, setModal] = useState<ReactNode>(null);
-
+    const notify = useNotify();
     let endpoint = getEndpoint(tableHeader);
     
     const deleteRow = async () => {
@@ -40,14 +41,17 @@ export default function DeleteRowButton({row,field,tableHeader,setCloudSavingSta
             });
 
             if (!response.ok) {
-                throw new Error();
+                const error : string = await response.json().then(err => err.message);
+                throw new Error(error);
             }
 
             changeSaveState("SAVED", {setCloudSavingState});
             
             await reloadDataFunc();
         } 
-        catch {
+        catch (error){
+            const err = error as Error
+            notify("ERROR",`${err.message}`,"ERROR")
             changeSaveState("ERROR", {setCloudSavingState});
         }
     }
